@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <input type="text" id="text" placeholder="Text oder URL eingeben" onkeyup="generateQRCode()">
+    <button onclick="generateQRCode()">QR Code erstellen</button>
+    <br>
+    
+    <button id="download-btn" style="display:none;" onclick="downloadQRCode()">QR Code herunterladen</button>
+    <center>
+        <div id="qrcode"></div>
+    </center>
+    
+
+    <!-- QRCode.js Bibliothek von CDN laden -->
+    <script src="./qrcode.min.js"></script>
+
+    <script>
+        let qrCode;
+
+        function generateQRCode() {
+            // QR Code Container leeren
+            document.getElementById('qrcode').innerHTML = "";
+
+            // Text oder URL eingeben
+            var text = document.getElementById("text").value;
+
+            // Überprüfen, ob Eingabe leer ist
+            if (text.trim() === "") {
+                //alert("Bitte einen Text oder eine URL eingeben");
+                return;
+            }
+
+            // QR Code generieren
+            qrCode = new QRCode(document.getElementById("qrcode"), {
+                text: text,
+                width: 1024, // Breite des QR Codes
+                height: 1024 // Höhe des QR Codes
+            });
+
+            // Download Button anzeigen
+            document.getElementById("download-btn").style.display = "inline-block";
+        }
+
+        function downloadQRCode() {
+            // Das Canvas-Element des QR Codes extrahieren
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            
+            // Überprüfen, ob QR-Code erstellt wurde
+            if (!qrCanvas) {
+                alert("Bitte erst einen QR Code generieren.");
+                return;
+            }
+
+            // Das Canvas als Bild (PNG) exportieren
+            const image = qrCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+            // Ein temporärer Link für den Download erstellen
+            const downloadLink = document.createElement("a");
+            downloadLink.href = image;
+            downloadLink.download = "qrcode.png"; // Name der heruntergeladenen Datei
+            downloadLink.click();
+        }
+    </script>
+</body>
+</html>
